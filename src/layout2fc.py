@@ -168,10 +168,9 @@ if __name__ == '__main__':
             tech_fname=argv.pop(i)
             tech_fname1,tech_fext=os.path.splitext(tech_fname)
             if tech_fext  != '.stack':
-                print(argv[argl-1]+' is not a stack file')
+                print(tech_fname+' is not a stack file')
                 exit()
             break
-
 
     argl=len(argv)
     if argl!=1:
