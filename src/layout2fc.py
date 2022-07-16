@@ -4,7 +4,7 @@ import sys,os
 import klayout.db as db
 
 import FreeCAD
-import Import, importDXF, Draft, PartDesign, Sketcher
+import Import, importDXF, Draft, Part, PartDesign, Sketcher
 
 from operator import itemgetter
 
@@ -18,8 +18,7 @@ def main(tech_fname, fname):
         for line in f:
             line=line.split('#')[0]
             [ldata,zdata]=line.split(':')
-            [z0,z1]=zdata.split()
-            stack[ldata]=[z0,z1]
+            stack[ldata]=zdata.split()
 
     stack_scale=1
     if 'scale' in stack.keys():
@@ -77,24 +76,46 @@ def main(tech_fname, fname):
         pocket.Visibility =True
         return pocket
 
+    def addVSurf(sketch,h):
+        compound=Part.makeCompound([])
+        for w in sketch.Shape.Wires:
+            f=w.extrude(Base.Vector(0,0,h))
+            compound.add(f)
+        obj=doc.addObject('Part::Feature','Compound')
+        obj.Shape=compound
+        obj.Visibility =True
+        return obj
 
-    layer_data_and_indexes= []
+    def addHSurf(sketch):
+        face=Part.makeFace(sketch.Shape.Wires)
+        obj=doc.addObject('Part::Feature','Face')
+        obj.Shape=face
+        obj.Visibility =True
+        return obj
+
+
+    layer_order_and_indexes= []
     for li in layout.layer_indexes():
-        linfo = layout.get_info(li)
-        layer_data_and_indexes.append((linfo.datatype,li))
-
-    layer_data_and_indexes=sorted(layer_data_and_indexes, key=itemgetter(0))
-
-    bodyName={}
-    for i in range(len(layer_data_and_indexes)):
-        li=layer_data_and_indexes[i][1]
         linfoi = layout.get_info(li)
         if linfoi.layer==0 or linfoi.name=="_0" or linfoi.name=="L0D0_0":
             continue
         ldatai=str(linfoi.layer)+"/"+str(linfoi.datatype)
         if ldatai not in stack.keys():
             continue
-        [z0i,z1i]=stack[ldatai]
+        layer_order_and_indexes.append((stack[ldatai][3],li))
+
+    layer_order_and_indexes=sorted(layer_order_and_indexes, key=itemgetter(0))
+
+    bodyName={}
+    for i in range(len(layer_order_and_indexes)):
+        li=layer_order_and_indexes[i][1]
+        linfoi = layout.get_info(li)
+        if linfoi.layer==0 or linfoi.name=="_0" or linfoi.name=="L0D0_0":
+            continue
+        ldatai=str(linfoi.layer)+"/"+str(linfoi.datatype)
+        if ldatai not in stack.keys():
+            continue
+        [z0i,z1i,opi,orderi]=stack[ldatai]
         z0i=float(z0i)
         z1i=float(z1i)
         fname_li=fname1+"_"+linfoi.name
@@ -115,11 +136,11 @@ def main(tech_fname, fname):
         #  body.ExportMode = 'Child Query'
         existings = doc.Objects
         importDXF.insert(fname_li+".dxf",doc.Name)
+        # pdb.set_trace()
         os.remove(fname_li+".dxf")
         newObjs = [o for o in doc.Objects if o not in existings]
         skObjs  = [o for o in newObjs if o.TypeId=='Part::Feature']
         sketchi=None
-        #  pdb.set_trace()
         if len(skObjs) >0:
             sketchi = Draft.make_sketch(skObjs, autoconstraints=True)
         for obj in newObjs:
@@ -130,30 +151,41 @@ def main(tech_fname, fname):
         #  body[ldatai].addObject(sketchi)
         #  doc.recompute()
         sketchi.Label="Sketch_"+linfoi.name
-        pad=addPad(sketchi,(z1i-z0i)*stack_scale)
-        pad.Label="Pad_"+sketchi.Label
-        #  pad.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
-        #  pad.Group_EnableExport = True
-        body.addObject(pad)
+        if opi=='add' or opi=='ins':
+          obj=addPad(sketchi,(z1i-z0i)*stack_scale)
+          obj.Label="Pad_"+sketchi.Label
+        elif opi=='vsurf':
+          obj=addVSurf(sketchi,(z1i-z0i)*stack_scale)
+          obj.Label="Shell_"+sketchi.Label
+          obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
+          obj.Group_EnableExport = True
+        elif opi=='hsurf':
+          obj=addHSurf(sketchi)
+          obj.Label="Sheet_"+sketchi.Label
+          obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
+          obj.Group_EnableExport = True
+        body.addObject(obj)
         doc.recompute()
-        for j in range(i):
-            if layer_data_and_indexes[j][0]==layer_data_and_indexes[i][0]:
-                break
-            lj=layer_data_and_indexes[j][1]
-            linfoj = layout.get_info(lj)
-            ldataj=str(linfoj.layer)+"/"+str(linfoj.datatype)
-            if ldataj not in stack.keys():
-                continue
-            [z0j,z1j]=stack[ldataj]
-            z0j=float(z0j)
-            z1j=float(z1j)
-            if z0i>=z1j or z0j>=z1i:
-                continue
-            pocket=addPocket(sketchi,(z1j-z0j)*stack_scale)
-            pocket.Label="Pocket_"+linfoi.name+"_"+linfoj.name
-            bodyj=doc.getObject(bodyName[ldataj])
-            bodyj.addObject(pocket)
-            doc.recompute()
+        if opi=='ins' or opi=='cut':
+           for j in range(i):
+              if layer_order_and_indexes[j][0]==layer_order_and_indexes[i][0]:
+                 break
+              lj=layer_order_and_indexes[j][1]
+              linfoj = layout.get_info(lj)
+              ldataj=str(linfoj.layer)+"/"+str(linfoj.datatype)
+              if ldataj not in stack.keys():
+                 continue
+              [z0j,z1j,opj,orderj]=stack[ldataj]
+              if opj=='add' or opi=='ins':
+                 z0j=float(z0j)
+                 z1j=float(z1j)
+                 if z0i>=z1j or z0j>=z1i:
+                   continue
+                 pocket=addPocket(sketchi,(z1j-z0j)*stack_scale)
+                 pocket.Label="Pocket_"+linfoi.name+"_"+linfoj.name
+                 bodyj=doc.getObject(bodyName[ldataj])
+                 bodyj.addObject(pocket)
+                 doc.recompute()
     Import.export([part], fname1+".step")
     doc.save()
     return doc
