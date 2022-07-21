@@ -34,6 +34,13 @@ def main(tech_fname, fname):
 
     work_layer = layout.layer()
     for li in layout.layer_indexes():
+        linfoi = layout.get_info(li)
+        ldatai=str(linfoi.layer)+"/"+str(linfoi.datatype)
+        if ldatai not in stack.keys():
+            continue
+        [z0i,z1i,opi,orderi]=stack[ldatai]
+        if opi=='vsurf':
+            continue
         for c in layout.each_cell():
             mergeReg = db.Region(c.begin_shapes_rec(li))
             mergeReg.merge()
@@ -136,7 +143,6 @@ def main(tech_fname, fname):
         #  body.ExportMode = 'Child Query'
         existings = doc.Objects
         importDXF.insert(fname_li+".dxf",doc.Name)
-        # pdb.set_trace()
         os.remove(fname_li+".dxf")
         newObjs = [o for o in doc.Objects if o not in existings]
         skObjs  = [o for o in newObjs if o.TypeId=='Part::Feature']
@@ -159,6 +165,7 @@ def main(tech_fname, fname):
           obj.Label="Shell_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
+          pdb.set_trace()
         elif opi=='hsurf':
           obj=addHSurf(sketchi)
           obj.Label="Sheet_"+sketchi.Label
