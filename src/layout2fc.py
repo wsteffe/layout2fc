@@ -85,17 +85,18 @@ def main(tech_fname, fname):
 
     def addVSurf(sketch,h):
         compound=Part.makeCompound([])
+        pdb.set_trace()
         for w in sketch.Shape.Wires:
             f=w.extrude(Base.Vector(0,0,h))
             compound.add(f)
-        obj=doc.addObject('Part::Feature','Compound')
+        obj=doc.addObject('PartDesign::Feature','Compound')
         obj.Shape=compound
         obj.Visibility =True
         return obj
 
     def addHSurf(sketch):
         face=Part.makeFace(sketch.Shape.Wires)
-        obj=doc.addObject('Part::Feature','Face')
+        obj=doc.addObject('PartDesign::Feature','Face')
         obj.Shape=face
         obj.Visibility =True
         return obj
@@ -144,8 +145,10 @@ def main(tech_fname, fname):
         existings = doc.Objects
         importDXF.insert(fname_li+".dxf",doc.Name)
         os.remove(fname_li+".dxf")
+        if opi=='vsurf':
+            pdb.set_trace()
         newObjs = [o for o in doc.Objects if o not in existings]
-        skObjs  = [o for o in newObjs if o.TypeId=='Part::Feature']
+        skObjs  = [o for o in newObjs if o.TypeId=='Part::Feature' or o.TypeId=='Part::PartFeature']
         sketchi=None
         if len(skObjs) >0:
             sketchi = Draft.make_sketch(skObjs, autoconstraints=True)
@@ -165,7 +168,6 @@ def main(tech_fname, fname):
           obj.Label="Shell_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
-          pdb.set_trace()
         elif opi=='hsurf':
           obj=addHSurf(sketchi)
           obj.Label="Sheet_"+sketchi.Label
