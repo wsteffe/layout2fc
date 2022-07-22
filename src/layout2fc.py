@@ -84,17 +84,17 @@ def main(tech_fname, fname):
         return pocket
 
     def addVSurf(sketch,h):
-        extrude=doc.addObject('Part::Extrusion','Extrude')
-        extrude.Base = sketch
-        extrude.DirMode = "Normal"
-        extrude.DirLink = None
-        extrude.LengthFwd = h
-        extrude.LengthRev = 0.000000000000000
-        extrude.Solid = False
+        extrude=doc.addObject('PartDesign::Extrusion','Pad')
+        extrude.Profile=sketch
+        extrude.NewSolid=False
+        extrude.Length = h
+        extrude.Direction = (0, 0, 1)
+        extrude.ReferenceAxis = None
+        extrude.AlongSketchNormal = 0
+        extrude.Type = 0
+        extrude.UpToFace = None
         extrude.Reversed = False
-        extrude.Symmetric = False
-        extrude.TaperAngle = 0.000000000000000
-        extrude.TaperAngleRev = 0.000000000000000
+        extrude.Offset = 0
         extrude.Visibility =True
         return extrude
 
@@ -165,18 +165,18 @@ def main(tech_fname, fname):
         if opi=='add' or opi=='ins':
           obj=addPad(sketchi,(z1i-z0i)*stack_scale)
           obj.Label="Pad_"+sketchi.Label
-          body.addObject(obj)
         elif opi=='vsurf':
-          extrude=addVSurf(sketchi,(z1i-z0i)*stack_scale)
-          extrude.Label="Shell_"+sketchi.Label
-          #extr.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
-          #extr.Group_EnableExport = True
-          #body.setBaseProperty(extrude)
+          body.addObject(sketchi)
+          obj=addVSurf(sketchi,(z1i-z0i)*stack_scale)
+          obj.Label="Shell_"+sketchi.Label
+          obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
+          obj.Group_EnableExport = True
         elif opi=='hsurf':
           obj=addHSurf(sketchi)
           obj.Label="Sheet_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
+        body.addObject(obj)
         doc.recompute()
         if opi=='ins' or opi=='cut':
            for j in range(i):
