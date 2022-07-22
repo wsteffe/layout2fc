@@ -84,15 +84,19 @@ def main(tech_fname, fname):
         return pocket
 
     def addVSurf(sketch,h):
-        compound=Part.makeCompound([])
-        pdb.set_trace()
-        for w in sketch.Shape.Wires:
-            f=w.extrude(Base.Vector(0,0,h))
-            compound.add(f)
-        obj=doc.addObject('PartDesign::Feature','Compound')
-        obj.Shape=compound
-        obj.Visibility =True
-        return obj
+        extrude=doc.addObject('Part::Extrusion','Extrude')
+        extrude.Base = sketch
+        extrude.DirMode = "Normal"
+        extrude.DirLink = None
+        extrude.LengthFwd = h
+        extrude.LengthRev = 0.000000000000000
+        extrude.Solid = False
+        extrude.Reversed = False
+        extrude.Symmetric = False
+        extrude.TaperAngle = 0.000000000000000
+        extrude.TaperAngleRev = 0.000000000000000
+        extrude.Visibility =True
+        return extrude
 
     def addHSurf(sketch):
         face=Part.makeFace(sketch.Shape.Wires)
@@ -145,13 +149,11 @@ def main(tech_fname, fname):
         existings = doc.Objects
         importDXF.insert(fname_li+".dxf",doc.Name)
         os.remove(fname_li+".dxf")
-        if opi=='vsurf':
-            pdb.set_trace()
         newObjs = [o for o in doc.Objects if o not in existings]
-        skObjs  = [o for o in newObjs if o.TypeId=='Part::Feature' or o.TypeId=='Part::PartFeature']
+        skShapes  = [o.Shape for o in newObjs if o.TypeId=='Part::Feature' or o.TypeId=='Part::PartFeature']
         sketchi=None
-        if len(skObjs) >0:
-            sketchi = Draft.make_sketch(skObjs, autoconstraints=True)
+        if len(skShapes) >0:
+            sketchi = Draft.make_sketch(skShapes, autoconstraints=True)
         for obj in newObjs:
             doc.removeObject(obj.Name)
         if sketchi==None:
@@ -163,17 +165,18 @@ def main(tech_fname, fname):
         if opi=='add' or opi=='ins':
           obj=addPad(sketchi,(z1i-z0i)*stack_scale)
           obj.Label="Pad_"+sketchi.Label
+          body.addObject(obj)
         elif opi=='vsurf':
-          obj=addVSurf(sketchi,(z1i-z0i)*stack_scale)
-          obj.Label="Shell_"+sketchi.Label
-          obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
-          obj.Group_EnableExport = True
+          extrude=addVSurf(sketchi,(z1i-z0i)*stack_scale)
+          extrude.Label="Shell_"+sketchi.Label
+          #extr.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
+          #extr.Group_EnableExport = True
+          #body.setBaseProperty(extrude)
         elif opi=='hsurf':
           obj=addHSurf(sketchi)
           obj.Label="Sheet_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
-        body.addObject(obj)
         doc.recompute()
         if opi=='ins' or opi=='cut':
            for j in range(i):
