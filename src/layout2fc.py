@@ -99,9 +99,8 @@ def main(tech_fname, fname):
         return extrude
 
     def addHSurf(sketch):
-        face=Part.makeFace(sketch.Shape.Wires)
-        obj=doc.addObject('PartDesign::Feature','Face')
-        obj.Shape=face
+        obj=doc.addObject('Part::Face','Face')
+        obj.Sources =sketch
         obj.Visibility =True
         return obj
 
@@ -165,18 +164,19 @@ def main(tech_fname, fname):
         if opi=='add' or opi=='ins':
           obj=addPad(sketchi,(z1i-z0i)*stack_scale)
           obj.Label="Pad_"+sketchi.Label
+          body.addObject(obj)
         elif opi=='vsurf':
           body.addObject(sketchi)
           obj=addVSurf(sketchi,(z1i-z0i)*stack_scale)
           obj.Label="Shell_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
+          body.addObject(obj)
         elif opi=='hsurf':
           obj=addHSurf(sketchi)
           obj.Label="Sheet_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
-        body.addObject(obj)
         doc.recompute()
         if opi=='ins' or opi=='cut':
            for j in range(i):
