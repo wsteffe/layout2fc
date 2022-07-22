@@ -145,7 +145,7 @@ def main(tech_fname, fname):
         pl.move(FreeCAD.Vector(0,0,z0i*stack_scale))
         body.Placement = pl
         body.Visibility = True
-        #  body.ExportMode = 'Child Query'
+        body.ExportMode = 'Child Query'
         existings = doc.Objects
         importDXF.insert(fname_li+".dxf",doc.Name)
         os.remove(fname_li+".dxf")
