@@ -167,6 +167,7 @@ def main(tech_fname, layout_fname):
         #  body[ldatai].addObject(sketchi)
         #  doc.recompute()
         sketchi.Label="Sketch_"+linfoi.name
+        sketchi.Visibility =False
         if opi=='add' or opi=='ins':
           obj=addPad(sketchi,(z1i-z0i)*stack_scale)
           obj.Label="Pad_"+sketchi.Label
@@ -178,6 +179,7 @@ def main(tech_fname, layout_fname):
           obj.Group_EnableExport = True
         elif opi=='hsurf':
           body.addObject(sketchi)
+          doc.recompute()
           obj=addHSurf(sketchi)
           obj.Label="Sheet_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
