@@ -4,7 +4,7 @@ import sys,os
 import klayout.db as db
 
 import FreeCAD
-import Import, importDXF, Draft, Part, PartDesign, Sketcher
+import Import, importDXF, Draft, PartDesign, Sketcher
 
 from operator import itemgetter
 
@@ -97,12 +97,6 @@ def main(tech_fname, layout_fname):
         extrude.Offset = 0
         extrude.Visibility =True
         return extrude
-
-    def addHSurf1(sketch):
-        obj=doc.addObject('Part::Face','Face')
-        obj.Sources =sketch
-        obj.Visibility =True
-        return obj
 
     def addHSurf(sketch):
         obj=doc.addObject('PartDesign::SubShapeBinder','Binder')
