@@ -1,7 +1,7 @@
 layout2fc.py is a python script to generate a 3D structure from a 2D layout plus stack informations.
 
 Usage:
-   layout2fc.py -stack file.stack  file.dxf
+   layout2fc.py  file1.stack  file2.dxf
 
 Output: a FreeCAD document: file.FCStd
         a step file:        file.step

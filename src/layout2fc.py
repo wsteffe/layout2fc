@@ -11,8 +11,8 @@ from operator import itemgetter
 import pdb
 #pdb.set_trace()
 
-def main(tech_fname, fname):
-    fname1,fext=os.path.splitext(fname)
+def main(tech_fname, layout_fname):
+    layout_fname1,fext=os.path.splitext(layout_fname)
     stack={}
     with open(tech_fname, 'r') as f:
         for line in f:
@@ -25,7 +25,7 @@ def main(tech_fname, fname):
         stack_scale=float(stack['scale'][0])
 
     layout = db.Layout()
-    layout.read(fname)
+    layout.read(layout_fname)
     for ci in layout.each_top_cell():
         c=layout.cell(ci)
         c.flatten(-1,True)
@@ -50,14 +50,14 @@ def main(tech_fname, fname):
 
 
     doc = FreeCAD.newDocument()
-    if fname1.startswith('CMP_'):
-        partName=fname1
+    if layout_fname1.startswith('CMP_'):
+        partName=layout_fname1
     else:
-        partName='CMP_'+fname1
+        partName='CMP_'+layout_fname1
 
     part=doc.addObject("App::Part", partName)
     doc.recompute()
-    doc.saveAs(fname1+'.FCStd')
+    doc.saveAs(layout_fname1+'.FCStd')
 
 
     def addPad(sketch,h):
@@ -98,9 +98,15 @@ def main(tech_fname, fname):
         extrude.Visibility =True
         return extrude
 
-    def addHSurf(sketch):
+    def addHSurf1(sketch):
         obj=doc.addObject('Part::Face','Face')
         obj.Sources =sketch
+        obj.Visibility =True
+        return obj
+
+    def addHSurf(sketch):
+        obj=doc.addObject('PartDesign::SubShapeBinder','Binder')
+        obj.Support=sketch
         obj.Visibility =True
         return obj
 
@@ -129,7 +135,7 @@ def main(tech_fname, fname):
         [z0i,z1i,opi,orderi]=stack[ldatai]
         z0i=float(z0i)
         z1i=float(z1i)
-        fname_li=fname1+"_"+linfoi.name
+        fname_li=layout_fname1+"_"+linfoi.name
         opt = db.SaveLayoutOptions()
         opt.format="DXF"
         # specifies to write only layer index "li" with target layer/datatype taken 
@@ -164,19 +170,19 @@ def main(tech_fname, fname):
         if opi=='add' or opi=='ins':
           obj=addPad(sketchi,(z1i-z0i)*stack_scale)
           obj.Label="Pad_"+sketchi.Label
-          body.addObject(obj)
         elif opi=='vsurf':
           body.addObject(sketchi)
           obj=addVSurf(sketchi,(z1i-z0i)*stack_scale)
           obj.Label="Shell_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
-          body.addObject(obj)
         elif opi=='hsurf':
+          body.addObject(sketchi)
           obj=addHSurf(sketchi)
           obj.Label="Sheet_"+sketchi.Label
           obj.addProperty('App::PropertyBool', 'Group_EnableExport', 'Group')
           obj.Group_EnableExport = True
+        body.addObject(obj)
         doc.recompute()
         if opi=='ins' or opi=='cut':
            for j in range(i):
@@ -198,7 +204,7 @@ def main(tech_fname, fname):
                  bodyj=doc.getObject(bodyName[ldataj])
                  bodyj.addObject(pocket)
                  doc.recompute()
-    Import.export([part], fname1+".step")
+    Import.export([part], layout_fname1+".step")
     doc.save()
     return doc
 
@@ -206,28 +212,23 @@ if __name__ == '__main__':
     sys.argv
     argv=sys.argv[1:]
     tech_fname=None
-    for i,arg in enumerate(argv):
-        if arg=="-stack":
-            argv.pop(i)
-            tech_fname=argv.pop(i)
-            tech_fname1,tech_fext=os.path.splitext(tech_fname)
-            if tech_fext  != '.stack':
-                print(tech_fname+' is not a stack file')
-                exit()
-            break
+    layout_fname=None
 
     argl=len(argv)
-    if argl!=1:
+    if argl<2:
         print("Syntax:  layout2fc  -stack stack_file  dxf_file")
         exit()
-    fname=argv[argl-1]
-    fname1,fext=os.path.splitext(fname)
-    if fext.lower()  != '.dxf':
-        print(argv[argl-1]+' is not a dxf file')
-        exit()
+    for i in range(2):
+      fname=argv[argl-1-i]
+      fname1,fext=os.path.splitext(fname)
+      if fext.lower()  == '.dxf':
+         layout_fname=fname
+      elif fext == '.stack':
+         tech_fname=fname
 
-    if tech_fname==None:
+    if layout_fname==None or tech_fname==None:
         print("Syntax:  layout2fc  -stack stack_file  dxf_file")
+        exit()
 
     if not os.path.exists(tech_fname):
         print(tech_fname+"  not found")
@@ -238,7 +239,7 @@ if __name__ == '__main__':
         exit()
 
     try:
-        main(tech_fname, fname)
+        main(tech_fname, layout_fname)
     except:
         import traceback
         traceback.print_exc()
