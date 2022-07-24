@@ -4,8 +4,8 @@ Usage:
    layout2fc.py [-step] file1.stack  file.dxf
 
 Output: 
--a FreeCAD document: file.FCStd
--if option "-step" is given also: file.step
+1) a FreeCAD document: file.FCStd
+2) if option "-step" is given also: file.step
 
 Requirewments:
  klayout and FreeCAD must be installed.
