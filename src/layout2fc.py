@@ -11,7 +11,7 @@ from operator import itemgetter
 import pdb
 #pdb.set_trace()
 
-def main(tech_fname, layout_fname):
+def main(tech_fname, layout_fname, export_step=False):
     layout_fname1,fext=os.path.splitext(layout_fname)
     stack={}
     with open(tech_fname, 'r') as f:
@@ -200,7 +200,8 @@ def main(tech_fname, layout_fname):
                  bodyj=doc.getObject(bodyName[ldataj])
                  bodyj.addObject(pocket)
                  doc.recompute()
-    Import.export([part], layout_fname1+".step")
+    if export_step:
+       Import.export([part], layout_fname1+".step")
     doc.save()
     return doc
 
@@ -209,7 +210,13 @@ if __name__ == '__main__':
     argv=sys.argv[1:]
     tech_fname=None
     layout_fname=None
-
+    export_step=False
+    argl=len(argv)
+    for i,arg in enumerate(argv):
+       if arg.lower()=='-step':
+          export_step=True
+          argv.pop(i)
+          break
     argl=len(argv)
     if argl<2:
         print("Syntax:  layout2fc  -stack stack_file  dxf_file")
@@ -235,7 +242,7 @@ if __name__ == '__main__':
         exit()
 
     try:
-        main(tech_fname, layout_fname)
+        main(tech_fname, layout_fname, export_step)
     except:
         import traceback
         traceback.print_exc()
