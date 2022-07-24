@@ -54,42 +54,4 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>dxfFileBrowse</sender>
-   <signal>clicked()</signal>
-   <receiver>ImportLayoutDialog</receiver>
-   <slot>dxfFileBrowseClicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>199</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stackFileBrowse</sender>
-   <signal>clicked()</signal>
-   <receiver>ImportLayoutDialog</receiver>
-   <slot>stackFileBrowseClicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>199</x>
-     <y>277</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
- <slots>
-  <slot>dxfFileBrowseClicked()</slot>
-  <slot>stackFileBrowseClicked()</slot>
- </slots>
 </ui>
