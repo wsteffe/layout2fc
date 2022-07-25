@@ -40,7 +40,9 @@ can be used to convert micron length unit used in the stackup definition to mm l
   - hsurf: generates an horizontal surface on plane z=hmin by filling the (closed) sketch profile.
 
 In example the lines:
->scale: 0.001
+
+><pre> scale: 0.001</pre>
+
 ><pre> 1/0:  0.0 70.0  add  0   # DIELECTRIC</pre>
 
 ><pre> 2/0:  0.0 70.0  ins  1   # FILLED THROUGH HOLE</pre>
