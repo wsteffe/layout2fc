@@ -11,7 +11,7 @@ Output:
   - A FreeCAD document file.FCStd
   - If option "-step" is set it produces also file.step
 
-Requirewments:
+Requirements:
 
   - klayout and FreeCAD must be installed.
   - klayout and FreeCAD python modules must be accessible trough a proper setting of python search path.
