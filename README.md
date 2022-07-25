@@ -14,22 +14,25 @@ Requirewments:
 
 Stack File Format:
 Composed of two kinds of lines
-1) Scale assignment
+* Scale assignment
 >scale: val
 
 In example the line
 >scale: 0.001
+
 can be used to convert micron length unit used in the stackup definition to mm length unit used in FreeCAD.
 
-2) Assignement of layer stackup data
-layerNum/datatype: hmin hmax  operation insertOrder   #Comment 
-operation is based on sketch stored in related layer.
-operation can be: 
-2.1) add: makes a solid extrusion from hmin to hmax
-2.2) ins: same extrusion as add plus a cut in all previous extrusions intersecting with it. Previuos is defined by insertionOrder (integer)  
-2.3) cut: same cut as for ins but without adding any solid extriusion
-2.4) vsurf: makes a surface extrusion from hmin to hmax. Sketch profile may be not closed.
-2.5) hsurf: generates an horizontal surface on plane z=hmin by filling the (closed) sketch profile.
+* Assignement of layer stackup data
+
+  layerNum/datatype: hmin hmax  operation insertOrder   #Comment 
+  operation is based on sketch stored in related layer.
+  operation can be:
+
+  * add: makes a solid extrusion from hmin to hmax
+  * ins: same extrusion as add plus a cut in all previous extrusions intersecting with it. Previuos is defined by insertionOrder (integer)  
+  * cut: same cut as for ins but without adding any solid extriusion
+  * vsurf: makes a surface extrusion from hmin to hmax. Sketch profile may be not closed.
+  * hsurf: generates an horizontal surface on plane z=hmin by filling the (closed) sketch profile.
 
 In example the lines:
 >scale: 0.001
