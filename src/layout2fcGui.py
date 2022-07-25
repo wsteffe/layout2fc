@@ -14,13 +14,11 @@ class ImportLayoutDialog:
        self.form.stackFileBrowse.clicked.connect(self.stackFileBrowseClicked)
 
    def dxfFileBrowseClicked(self):
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(FreeCADGui.getMainWindow(),"QFileDialog.getOpenFileName()", "","DXF Files (*.dxf)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(FreeCADGui.getMainWindow(),"QFileDialog.getOpenFileName()", "","DXF Files (*.dxf)")
         if fileName:
             self.form.dxfFileName.setText(fileName)
    def stackFileBrowseClicked(self):
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(FreeCADGui.getMainWindow(),"QFileDialog.getOpenFileName()", "","Stack Files (*.stack)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(FreeCADGui.getMainWindow(),"QFileDialog.getOpenFileName()", "","Stack Files (*.stack)")
         if fileName:
             self.form.stackFileName.setText(fileName)
    def accept(self):
