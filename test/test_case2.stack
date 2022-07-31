@@ -1,44 +1,44 @@
 scale:  0.001
-1/0:   0    137  add  0   # DIEL_1
-2/0:   137  274  add  0   # DIEL_2
-3/0:   274  411  add  0   # DIEL_3
-4/0:   411  548  add  0   # DIEL_4
-5/0:   548  685  add  0   # DIEL_5
-6/0:   685  822  add  0   # DIEL_6
-7/0:   822  959  add  0   # DIEL_7
-8/0:   959 1096  add  0   # DIEL_8
-9/0:  1096 1233  add  0   # DIEL_9
-10/0: 1233 1370  add  0   # DIEL_10
-11/0: 1370 1507  add  0   # DIEL_11
-12/0: 1507 1644  add  0   # DIEL_12
-1/1:   137  137  hsurf 0   # BC_W11
-2/1:   274  274  hsurf 0   # BC_W12
-3/1:   411  411  hsurf 0   # BC_W13
-4/1:   548  548  hsurf 0   # BC_W14
-5/1:   685  685  hsurf 0   # BC_W15
-6/1:   822  822  hsurf 0   # BC_W16
-7/1:   959  959  hsurf 0   # BC_W17
-8/1:  1096 1096  hsurf 0   # BC_W18
-9/1:  1233 1233  hsurf 0   # BC_W19
-10/1: 1370 1370  hsurf 0   # BC_W1A
-11/1: 1507 1507  hsurf 0   # BC_W1B
-12/1: 1644 1644  hsurf 0   # BC_W1C
-1/2:   137  137  hsurf 0   # BC_W21
-3/2:   411  411  hsurf 0   # BC_W23
-4/2:   548  548  hsurf 0   # BC_W24
-5/2:   685  685  hsurf 0   # BC_W25
-7/2:   959  959  hsurf 0   # BC_W27
-8/2:  1096 1096  hsurf 0   # BC_W28
-10/2: 1370 1370  hsurf 0   # BC_W2A
-1/5:   0    137  ins  1   # BC_W51
-2/5:   137  274  ins  1   # BC_W52
-3/5:   274  411  ins  1   # BC_W53
-4/5:   411  548  ins  1   # BC_W54
-5/5:   548  685  ins  1   # BC_W55
-6/5:   685  822  ins  1   # BC_W56
-7/5:   822  959  ins  1   # BC_W57
-8/5:   959 1096  ins  1   # BC_W58
-9/5:  1096 1233  ins  1   # BC_W59
-10/5: 1233 1370  ins  1   # BC_W5A
-11/5: 1370 1507  ins  1   # BC_W5B
-12/5: 1507 1644  ins  1   # BC_W5C
+DIEL_1:   0    137  add  0
+DIEL_2:   137  274  add  0
+DIEL_3:   274  411  add  0
+DIEL_4:   411  548  add  0
+DIEL_5:   548  685  add  0
+DIEL_6:   685  822  add  0
+DIEL_7:   822  959  add  0
+DIEL_8:   959 1096  add  0
+DIEL_9:  1096 1233  add  0
+DIEL_10: 1233 1370  add  0
+DIEL_11: 1370 1507  add  0
+DIEL_12: 1507 1644  add  0
+BC_W11:   137  137  hsurf 0
+BC_W12:   274  274  hsurf 0
+BC_W13:   411  411  hsurf 0
+BC_W14:   548  548  hsurf 0
+BC_W15:   685  685  hsurf 0
+BC_W16:   822  822  hsurf 0
+BC_W17:   959  959  hsurf 0
+BC_W18:  1096 1096  hsurf 0
+BC_W19:  1233 1233  hsurf 0
+BC_W1A: 1370 1370  hsurf 0
+BC_W1B: 1507 1507  hsurf 0
+BC_W1C: 1644 1644  hsurf 0
+BC_W21:   137  137  hsurf 0
+BC_W23:   411  411  hsurf 0
+BC_W24:   548  548  hsurf 0
+BC_W25:   685  685  hsurf 0
+BC_W27:   959  959  hsurf 0
+BC_W28:  1096 1096  hsurf 0
+BC_W2A: 1370 1370  hsurf 0
+BC_W51:   0    137  ins  1
+BC_W52:   137  274  ins  1
+BC_W53:   274  411  ins  1
+BC_W54:   411  548  ins  1
+BC_W55:   548  685  ins  1
+BC_W56:   685  822  ins  1
+BC_W57:   822  959  ins  1
+BC_W58:   959 1096  ins  1
+BC_W59:  1096 1233  ins  1
+BC_W5A: 1233 1370  ins  1
+BC_W5B: 1370 1507  ins  1
+BC_W5C: 1507 1644  ins  1
